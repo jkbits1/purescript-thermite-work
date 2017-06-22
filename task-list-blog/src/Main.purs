@@ -3,8 +3,8 @@ module Main (main) where
 
 import Prelude
 -- import Components.TaskList (initialTaskListState, taskList)
--- import Control.Monad.Eff (Eff)
--- import DOM (DOM) as DOM
+import Control.Monad.Eff (Eff)
+import DOM (DOM)
 -- import Thermite as T
 
 -- -- | The main method creates the task list component, and renders it to the document body.
@@ -24,6 +24,7 @@ import Data.String as DS
 import Data.Array (take, length) as DA
 import Data.List.Types as DLT
 
+import Data.Foldable
 
 
 import Unsafe.Coerce (unsafeCoerce)
@@ -38,6 +39,7 @@ import Data.Either
 import Data.Lens
 
 -- main = T.defaultMain spec initialState unit
+main :: forall e. Eff( dom :: DOM | e) Unit
 main = T.defaultMain taskList initialTaskListState unit
 
 
@@ -78,8 +80,11 @@ header = T.simpleSpec performAction render
       [ R.p'  [ R.button  [ RP.onClick \_ -> send NewTask ] 
                           [ R.text "New Task" 
                           ]
-              ],
-        R.p' [ R.text "xyz" ]
+              ]
+      , R.p' [ R.text "xyz" ]
+      -- , R.p' [ R.text $ foldl (<>) "" state.tasks ]
+      -- , R.p' [ R.text $ foldl (<>) "" _tasks ]
+      , R.p' [ R.text $ foldl (<>) "" ["abc", "xyz"] ]
       ]
 
 
