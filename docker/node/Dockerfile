@@ -10,4 +10,7 @@ WORKDIR /home/pureuser
 
 USER pureuser
 
-CMD ["/bin/bash"]
+ENTRYPOINT ["/bin/bash"]
+
+
+# CMD ["/bin/bash"]

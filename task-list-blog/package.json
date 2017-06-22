@@ -1,0 +1,24 @@
+{
+  "name": "task-list-blog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "clean": "rimraf output && rimraf .pulp-cache",
+    "build": "pulp browserify > html/index.js",
+    "build-opt": "pulp build --optimise > html/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jkbits1",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  },
+  "devDependencies": {
+    "rimraf": "^2.6.1"
+  }
+}
