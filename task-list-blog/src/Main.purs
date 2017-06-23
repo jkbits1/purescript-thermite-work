@@ -31,7 +31,7 @@ import Data.Foldable
 import Unsafe.Coerce (unsafeCoerce)
 
 import Data.Maybe
-import Data.List as L
+import Data.List -- as L
 
 import Data.Tuple
 
@@ -46,18 +46,18 @@ main = T.defaultMain taskList initialTaskListState unit
 
 data TaskListAction = NewTask | TaskAction Int TaskAction
 
-type TaskListState = { tasks :: L.List TaskState }
+type TaskListState = { tasks :: List TaskState }
 
-initialTaskListState = { tasks : L.Nil }
+initialTaskListState = { tasks : Nil }
 
 performAction :: T.PerformAction _ TaskListState _ TaskListAction
 performAction NewTask _ state =
-  void $ T.modifyState $ \state -> state { tasks = L.Cons { text: "abc" } state.tasks }
+  void $ T.modifyState $ \state -> state { tasks = Cons { text: "abc" } state.tasks }
 performAction (TaskAction i RemoveTask) _ state =
-  void $ T.modifyState $ \state -> state { tasks = fromMaybe state.tasks (L.deleteAt i state.tasks) }
+  void $ T.modifyState $ \state -> state { tasks = fromMaybe state.tasks (deleteAt i state.tasks) }
 performAction _ _ _ = pure unit
 
-_tasks :: Lens' TaskListState (L.List TaskState)
+_tasks :: Lens' TaskListState (List TaskState)
 -- _tasks = lens _.tasks (_ { tasks = _ } )
 -- also
 _tasks = lens (\state -> state.tasks)
@@ -71,7 +71,9 @@ _TaskAction = prism (uncurry TaskAction) \ta ->
 
 taskList :: T.Spec _ TaskListState _ TaskListAction
 taskList = 
-  header 
+  header <> taskSpecs
+
+taskSpecs = T.focus _tasks _TaskAction $ T.foreach \_ -> taskSpec
 
 header :: T.Spec _ TaskListState _ TaskListAction
 header = T.simpleSpec performAction render
@@ -86,20 +88,30 @@ header = T.simpleSpec performAction render
       -- , R.p' [ R.text $ foldl (<>) "" state.tasks ]
       -- , R.p' [ R.text $ foldl (<>) "" _tasks ]
       , R.p' [ R.text $ foldl (<>) "" ["abc", "xyz"] ]
+
+      , R.p' [ R.text (reduceTasks taskList1).text ]
       ]
 
 -- :t head $ Cons { text : "1" } : Nil
 
 task1 :: TaskState
-task1 = { text : "Task "}
+task1 = { text : "Task1"}
+
+task2 :: TaskState
+task2 = { text : "Task2"}
 
 taskList1 :: List TaskState
-taskList1 = L.Cons task1 L.Nil
+taskList1 = Cons task1 $ Cons task2 Nil
 
 firstTask :: List TaskState -> TaskState
-firstTask = \xs -> fromMaybe { text : "" } $ L.head xs
+firstTask = \xs -> fromMaybe { text : "" } $ head xs
 
+-- refactor taskstate as monoid, perhaps
 
+addTasks :: TaskState -> TaskState -> TaskState
+addTasks t1 t2 = { text : t1.text <> t2.text }
+
+reduceTasks ts = foldl addTasks { text : "" } ts
 
 
 
