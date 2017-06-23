@@ -1,5 +1,6 @@
+module Main where
 
-module Main (main) where
+-- module Main (main) where
 
 import Prelude
 -- import Components.TaskList (initialTaskListState, taskList)
@@ -86,6 +87,19 @@ header = T.simpleSpec performAction render
       -- , R.p' [ R.text $ foldl (<>) "" _tasks ]
       , R.p' [ R.text $ foldl (<>) "" ["abc", "xyz"] ]
       ]
+
+-- :t head $ Cons { text : "1" } : Nil
+
+task1 :: TaskState
+task1 = { text : "Task "}
+
+taskList1 :: List TaskState
+taskList1 = L.Cons task1 L.Nil
+
+firstTask :: List TaskState -> TaskState
+firstTask = \xs -> fromMaybe { text : "" } $ L.head xs
+
+
 
 
 
